@@ -3,7 +3,7 @@
 
 library(tidyverse) 
 
-#Part 1: 
+#PART 1: Initial Exploratory Analysis
 
 #Question 1: What is the sales distribution by product category?
 #Variable type: 1 categorical → Use: Bar Chart
@@ -93,7 +93,6 @@ techstore_sales %>%
   labs(title = "Sales Over Time") +
   theme(plot.title = element_text(hjust = 0.5))
 
-
 # Part 3 : Comparative Analysis
 
 #Question 5: How do prices vary across different regions?
@@ -101,8 +100,8 @@ techstore_sales %>%
 #Expected insight: Compare price distributions by region
 
 techstore_sales %>%
-  ggplot(aes(x = region, y = price)) + 
-  geom_boxplot()
+  ggplot(aes(x = region, y = price, fill = region)) + 
+  geom_boxplot() +
   theme_bw() +  
   labs(title = "Price distribution by region") +
   theme(plot.title = element_text(hjust = 0.5))
@@ -110,5 +109,53 @@ techstore_sales %>%
 #Question 6: What is the sales composition by product in each channel?
 #Variable type: 2 categorical → Use: Stacked Bar Chart
 #Expected insight: Understand product mix by sales channel
+
+techstore_sales %>%
+  ggplot(aes(y = product , fill = channel)) + 
+  geom_bar(position = "fill") +
+  theme_bw() +  
+  labs(title = "Sales composition by product channel") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Propose at least two new visualizations that bring other interesting
+#insights about the dataset.
+
+#Regional sales data is often used by district or upper level managers
+#for decision making. I used the summarise function above to calculate
+#total sales (in $1000) to pipe into a column graph (different bar graph).
+#I found this cheatsheet helpful
+#https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf
+
+# Sales composition by region  
+techstore_sales %>%
+  group_by(region) %>%
+  summarise(total_sales = sum((price * quantity)/1000, na.rm = TRUE)) %>%
+  ungroup() %>%
+  ggplot(aes(x = region, y = total_sales, fill = total_sales)) +
+  geom_col() +
+  theme_bw() +
+  labs(title = "Sales Composition by Region", y = "Totals Sales (in $1000)") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Another way to visually represent this would be to use the maps library
+#as demonstrated in lecture 3. You could lay the same graph as above
+#(Sales composition by region ) on a map of the US with the sales figures.
+#That would be both visually appealing and useful.
+
+#pseduocode
+#library(maps)
+#region_map <- techstore_stales("region) 
+#map_sales <- region_map %>% 
+  #left_join(total_sales = sum((price * quantity)/1000)
+    #by ...
+#ggplot(aes(x = region, y = total_sales, fill = total_sales)) +
+#geom_polygon() +
+#theme_bw() +
+#labs(title = "Sales Composition by Region", y = "Totals Sales (in $1000)") +
+#theme(plot.title = element_text(hjust = 0.5))
+
+
+
+
 
 
